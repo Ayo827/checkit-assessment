@@ -7,11 +7,7 @@
   },
   "compatibility_flags": [
     "nodejs_compat"
-  ],
-  "services": [
-    {
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "checkit-assessment"
-    }
   ]
 }
+
+
