@@ -5,6 +5,8 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Star, Truck, ShieldCheck, RefreshCcw, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { notFound } from "next/navigation";
+import { AddToCartButton } from "@/features/products/components/AddToCartButton";
+import { ProductReviews } from "@/features/products/components/ProductReviews";
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;
@@ -95,14 +97,36 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
             <div className="pt-4 border-t border-gray-100">
               <div className="flex items-baseline space-x-3">
-                <span className="text-5xl font-black text-gray-900">${product.price}</span>
+                <span className="text-5xl font-black text-gray-900 font-display">${product.price}</span>
                 {product.discountPercentage > 0 && (
-                  <span className="text-xl font-bold text-green-600">-{product.discountPercentage}% OFF</span>
+                  <span className="text-xl font-bold text-green-600 font-display">-{product.discountPercentage}% OFF</span>
                 )}
               </div>
               <p className="mt-4 text-lg text-gray-500 font-medium leading-relaxed capitalize">
                 {product.description}
               </p>
+              
+              <div className="mt-6 flex flex-wrap gap-4 items-center">
+                <div className={cn(
+                  "inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold border",
+                  product.stock > 0 
+                    ? "bg-green-50 text-green-700 border-green-100" 
+                    : "bg-red-50 text-red-700 border-red-100"
+                )}>
+                  <div className={cn("h-2 w-2 rounded-full", product.stock > 0 ? "bg-green-500" : "bg-red-500")} />
+                  {product.availabilityStatus || (product.stock > 0 ? "In Stock" : "Out of Stock")}
+                </div>
+                
+                <span className="text-sm font-bold text-gray-400">
+                  Available Quantity: <span className={cn("text-gray-900", product.stock < 10 && "text-red-600")}>{product.stock}</span>
+                </span>
+
+                {product.stock < 5 && product.stock > 0 && (
+                  <span className="text-xs font-black text-red-600 uppercase tracking-widest animate-pulse">
+                    Low Stock!
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 py-8 border-y border-gray-100">
@@ -135,16 +159,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </div>
             </div>
 
+
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <button className="flex-1 rounded-2xl bg-gray-900 py-5 text-lg font-black text-white transition-all hover:bg-blue-600 hover:scale-105 active:scale-95 shadow-xl shadow-gray-200 flex items-center justify-center gap-3">
-                <ShoppingCart className="h-6 w-6" />
-                Add to Cart
-              </button>
-              <button className="flex-1 rounded-2xl border-2 border-gray-900 py-5 text-lg font-black text-gray-900 transition-all hover:bg-gray-50 hover:scale-105 active:scale-95">
-                Buy Now
-              </button>
+              <AddToCartButton product={product} variant="primary" />
+              <AddToCartButton product={product} variant="outline" className="border-gray-900" />
             </div>
           </div>
+        </div>
+
+        <div className="mt-20 pt-20 border-t border-gray-100 pb-20">
+          <ProductReviews reviews={product.reviews || []} totalRating={product.rating} />
         </div>
       </div>
     </main>

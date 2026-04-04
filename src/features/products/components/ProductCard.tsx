@@ -43,7 +43,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
 
         <div className="mt-auto flex items-center justify-between">
           <div className="flex flex-col">
-            <span className="text-xl font-black text-gray-900">${product.price}</span>
+            <span className="text-xl font-black text-gray-900 font-display">${product.price}</span>
             {product.discountPercentage > 0 && (
               <span className="text-xs font-medium text-green-600">
                 {product.discountPercentage}% OFF

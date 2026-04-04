@@ -46,3 +46,12 @@ export interface ProductResponse {
   skip: number;
   limit: number;
 }
+
+export interface CartItem {
+  id: number;
+  title: string;
+  price: number;
+  thumbnail: string;
+  quantity: number;
+  stock: number;
+}

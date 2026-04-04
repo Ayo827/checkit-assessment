@@ -9,11 +9,14 @@ A modern, performant product catalogue built with **Next.js 16**, **TypeScript**
 - **Product Listing** — Browse a paginated grid of products fetched from [DummyJSON](https://dummyjson.com)
 - **Search** — Real-time debounced search with instant URL sync
 - **Category Filtering** — Filter products by category via sticky filter bar
-- **Product Detail Page** — Full product view with images, ratings, reviews count, delivery/warranty/return info, and an "Add to Cart" CTA
-- **Granular Loading States** — Skeleton UI for the product grid during search/category transitions, powered by React `Suspense` with dynamic keys
-- **SEO** — Dynamic `generateMetadata` per product page with OpenGraph support
-- **Error Handling** — Custom error boundary UI (`error.tsx`) and 404 handling via `notFound()`
-- **Component Tests** — Unit tests for `ProductCard` using Vitest + React Testing Library
+- **Product Detail Page** — Full product view with images, ratings, stock status, delivery/warranty info, and an interactive "Add to Cart" system
+- **Product Reviews** — Customer feedback section with star ratings, reviewer details, and "Verified Purchase" badges
+- **Review Pagination** — Client-side pagination for product reviews (2 per page) with smooth scroll-to-top interaction
+- **Shopping Cart** — Persistent cart (localStorage) with stock-aware quantity controls, subtotals, and premium UI
+- **Checkout Process** — Simulated multi-step checkout flow with form validation and order confirmation. The "Buy Now" button leads directly here for a fast checkout.
+- **Navigation** — Sticky premium Navbar with dynamic cart count badge
+- **SEO & Performance** — Server Components for initial load, Client Components for interactivity, and dynamic OpenGraph metadata
+- **Testing** — Component tests for core UI elements using Vitest
 
 ---
 
@@ -27,7 +30,8 @@ A modern, performant product catalogue built with **Next.js 16**, **TypeScript**
 | Icons | Lucide React |
 | Data Source | [DummyJSON API](https://dummyjson.com/docs/products) |
 | Testing | Vitest + React Testing Library + jest-dom |
-| Test Environment | jsdom |
+| State | React Context + LocalStorage |
+| Deployment | **Vercel** (originally Cloudflare Workers) |
 
 ---
 
@@ -36,13 +40,16 @@ A modern, performant product catalogue built with **Next.js 16**, **TypeScript**
 ```
 src/
 ├── app/                        # Next.js App Router pages
-│   ├── page.tsx                # Home — product listing with search & categories
-│   ├── layout.tsx              # Root layout
+│   ├── cart/
+│   │   └── page.tsx            # Cart — item review & quantity management
+│   ├── checkout/
+│   │   └── page.tsx            # Checkout — simulated payment & confirmation
+│   ├── products/
+│   │   └── [id]/
+│   │       └── page.tsx        # Product detail page (dynamic route)
+│   ├── layout.tsx              # Root layout with CartProvider & Navbar
 │   ├── loading.tsx             # Global loading skeleton
-│   ├── error.tsx               # Global error boundary UI
-│   └── products/
-│       └── [id]/
-│           └── page.tsx        # Product detail page (dynamic route)
+│   └── error.tsx               # Global error boundary UI
 │
 ├── features/
 │   └── products/
@@ -51,10 +58,14 @@ src/
 │           ├── ProductCard.test.tsx # Unit tests for ProductCard
 │           ├── ProductGrid.tsx      # Responsive grid + empty/loading states
 │           ├── ProductResults.tsx   # Server Component — fetches & renders results
+│           ├── ProductReviews.tsx   # Client Component — paginated customer reviews
+│           ├── AddToCartButton.tsx  # Client Component — cart interaction
 │           ├── SearchInput.tsx      # Debounced search with URL sync
 │           └── CategoryFilter.tsx   # Category pills with active state
 │
 ├── components/
+│   ├── layout/
+│   │   └── Navbar.tsx          # Sticky navigation with cart badge
 │   └── ui/
 │       ├── Skeleton.tsx         # Reusable skeleton animation component
 │       ├── Pagination.tsx       # URL-based pagination
@@ -162,3 +173,11 @@ All API calls are centralised in `src/lib/api/client.ts`:
 | `getProductById(id)` | Fetch a single product by ID |
 | `getCategories()` | Fetch all available category slugs |
 | `getProductsByCategory(category, limit, skip)` | Fetch products filtered by category |
+
+---
+
+## Deployment
+
+This project was originally intended to be deployed on **Cloudflare Workers** using `open-next`. However, due to persistent configuration errors with the `wrangler.jsonc` file, the deployment strategy was shifted to **Vercel** as a reliable alternative.
+
+Vercel provides seamless integration for Next.js 16 applications, ensuring that Server Components, dynamic data fetching, and caching strategies work out of the box with zero configuration overhead for this assessment.
